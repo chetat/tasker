@@ -1,5 +1,7 @@
 package com.yekuwilfred.tasker;
 
+import android.app.Activity;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -14,4 +16,11 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void addNote(){
+        Activity activity = new AddTask();
+
+    }
+
 }

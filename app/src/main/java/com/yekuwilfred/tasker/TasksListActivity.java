@@ -7,13 +7,11 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yekuwilfred.tasker.adapters.TaskRecyclerViewAdapter;
 import com.yekuwilfred.tasker.model.Task;
-import com.yekuwilfred.tasker.model.TaskDataBase;
 import com.yekuwilfred.tasker.model.TaskViewModel;
 
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,9 +22,7 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
     public static final int EDIT_TASK_CODE = 12;
     private RecyclerView mTaskRv;
     private TaskRecyclerViewAdapter mTaskAdapter;
-    private LiveData<List<Task>> mTasks = null;
     private FloatingActionButton fab;
-    private TaskDataBase mMTaskDataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +46,6 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
             }
         });
 
-        mMTaskDataBase = TaskDataBase.getInstance(getApplicationContext());
     }
 
     @Override
@@ -72,11 +67,9 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
 
     @Override
     public void onItemClick(int itemId) {
-
-        Intent taskIntent = new Intent(getApplicationContext(), AddTask.class);
+        Intent taskIntent = new Intent(getApplicationContext(), EditTask.class);
         taskIntent.putExtra(TASK_ITEM_ID, itemId);
         startActivity(taskIntent);
-
     }
 
 
