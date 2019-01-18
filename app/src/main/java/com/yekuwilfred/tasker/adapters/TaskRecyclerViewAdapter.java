@@ -13,7 +13,6 @@ import com.yekuwilfred.tasker.utils.Constants;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.SimpleTimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +22,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
 
     //Date Format Constant
     private static final String DATE_FORMAT = Constants.DATE_FORMAT;
+    private static final String TIME_FORMAT = Constants.TIME_FORMAT;
 
     private final Context mContext;
     //Handle Item Clicks
@@ -31,9 +31,10 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     private List<Task> mTaskList;
     private LayoutInflater mInflater;
 
-    //Date Formater
-    private SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-   // private SimpleTimeZone timeZone = new SimpleTimeZone(0, )
+    //Date and Time Formater
+    private SimpleDateFormat mDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+     private SimpleDateFormat mTimeFormat = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+    private TextView mEmptyRv;
 
     public TaskRecyclerViewAdapter(Context context, ItemClickListener itemClickListener){
         mContext = context;
@@ -45,6 +46,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     @Override
     public TaskVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.task_item, parent, false);
+        mEmptyRv = view.findViewById(R.id.empty_rv);
         return new TaskVH(view);
     }
 
@@ -52,12 +54,14 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     public void onBindViewHolder(@NonNull TaskVH holder, int position) {
         String taskTitle = mTaskList.get(position).getTitle();
         String taskDescription = mTaskList.get(position).getDescription();
-        String taskDate = dateformat.format(mTaskList.get(position).getDate());
+        String taskDate = mDateFormat.format(mTaskList.get(position).getDate());
+        String taskTime = mTimeFormat.format(mTaskList.get(position).getTime());
 
 
         holder.title.setText(taskTitle);
         holder.description.setText(taskDescription);
         holder.date.setText(taskDate);
+        holder.time.setText(taskTime);
     }
 
     /**
@@ -65,6 +69,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
      */
     @Override
     public int getItemCount() {
+
         if (mTaskList == null){
             return 0;
         }
@@ -91,6 +96,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
     }
 
     class TaskVH extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private final TextView time;
         private TextView title;
         private TextView description;
         private TextView date;
@@ -100,6 +106,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             title = itemView.findViewById(R.id.task_title);
             description = itemView.findViewById(R.id.task_description);
             date = itemView.findViewById(R.id.task_date);
+            time = itemView.findViewById(R.id.task_time);
 
             itemView.setOnClickListener(this);
         }

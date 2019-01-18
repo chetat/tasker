@@ -1,19 +1,27 @@
 package com.yekuwilfred.tasker;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yekuwilfred.tasker.model.Task;
 import com.yekuwilfred.tasker.model.TaskDataBase;
 import com.yekuwilfred.tasker.model.TaskViewModel;
+import com.yekuwilfred.tasker.utils.Constants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.BitSet;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,24 +31,34 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.yekuwilfred.tasker.TasksListActivity.TASK_ITEM_ID;
+import static com.yekuwilfred.tasker.utils.Constants.DATE_FORMAT;
+import static com.yekuwilfred.tasker.utils.Constants.TIME_FORMAT;
 
 public class EditTask extends AppCompatActivity {
 
-    private static final String DATE_FORMAT = "dd/MM/yy";
     private static final int DEFAULT_TASK_ID = -1;
+    private static final boolean IS24HOUR = true;
 
-    private EditText mTitleField;
-    private EditText mDescriptionField;
-    private EditText mDateField;
-    private Date mDateObject;
+
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-    private FloatingActionButton mSaveBtn;
+    SimpleDateFormat simpleTimeFormat = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
 
     private String mDateString;
     private String mDescription;
     private String mTitle;
     private int mTaskId;
-    private TextView mAddTaskTv;
+    private Date mDateObject;
+    private Calendar mCalendar;
+    private long mTaskTime;
+    private int mYear, mMonth, mDay, mHour, mMinute;
+
+
+    private EditText mTimeField;
+    private EditText mTitleField;
+    private EditText mDescriptionField;
+    private EditText mDateField;
+    private FloatingActionButton mSaveBtn;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,12 +68,15 @@ public class EditTask extends AppCompatActivity {
         mTitleField = findViewById(R.id.task_title_field);
         mDescriptionField = findViewById(R.id.task_description_field);
         mDateField = findViewById(R.id.date_field);
-        mAddTaskTv = findViewById(R.id.add_task_tv);
+        TextView addTaskTv = findViewById(R.id.add_task_tv);
         mSaveBtn = findViewById(R.id.save_btn);
+        Button setDateBtn = findViewById(R.id.date_btn);
+        Button setTimeBtn = findViewById(R.id.time_btn);
+        mTimeField = findViewById(R.id.time_field);
 
-        mAddTaskTv.setText(getString(R.string.update_task));
+        addTaskTv.setText(getString(R.string.update_task));
 
-
+        mCalendar = Calendar.getInstance();
         Intent taskIntent = getIntent();
 
         /*
@@ -77,6 +98,51 @@ public class EditTask extends AppCompatActivity {
                 });
             }
         }
+
+        //Display Date Picker Dialog when button is clicked
+        setDateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mYear = mCalendar.get(Calendar.YEAR);
+                mMonth = mCalendar.get(Calendar.MONTH);
+                mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(EditTask.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                mDateField.setText(dayOfMonth  + getString(R.string.slash) + (month + 1) + getString(R.string.slash) + year);
+                            }
+
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+
+        //Displays Time Picker Dialog
+        setTimeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Initialise with hours and time of the day
+                mHour = mCalendar.get(Calendar.HOUR_OF_DAY);
+                mMinute = mCalendar.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(EditTask.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        mTimeField.setText(hourOfDay + ":" + minute);
+                        Calendar c = Calendar.getInstance();
+                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        c.set(Calendar.MINUTE, minute   );
+                        mTaskTime = c.getTime().getTime();
+
+                    }
+                }, mHour, mMinute, IS24HOUR);
+                timePickerDialog.show();
+            }
+        });
+
+
     }
 
 
@@ -90,16 +156,17 @@ public class EditTask extends AppCompatActivity {
                 mDescription = mDescriptionField.getText().toString();
                 mDateString = mDateField.getText().toString();
 
+                //Format String to date object
                 try {
                     mDateObject = simpleDateFormat.parse(mDateString);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-
                 task.setTitle(mTitle);
                 task.setDescription(mDescription);
                 task.setDate(mDateObject);
+                task.setTime(mTaskTime);
 
                 TaskViewModel vm = ViewModelProviders.of(EditTask.this).get(TaskViewModel.class);
                 vm.update(task);
@@ -115,6 +182,7 @@ public class EditTask extends AppCompatActivity {
         mTitleField.setText(task.getTitle());
         mDescriptionField.setText(task.getDescription());
         mDateField.setText(simpleDateFormat.format(task.getDate()));
+        mTimeField.setText(simpleTimeFormat.format(task.getTime()));
     }
 
 }
