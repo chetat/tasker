@@ -14,13 +14,10 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yekuwilfred.tasker.model.Task;
-import com.yekuwilfred.tasker.model.TaskDataBase;
 import com.yekuwilfred.tasker.model.TaskViewModel;
-import com.yekuwilfred.tasker.utils.Constants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -40,8 +37,10 @@ public class EditTask extends AppCompatActivity {
     private static final boolean IS24HOUR = true;
 
 
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-    SimpleDateFormat simpleTimeFormat = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+    SimpleDateFormat simpleDateFormat =
+            new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+    SimpleDateFormat simpleTimeFormat =
+            new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
 
     private String mDateString;
     private String mDescription;
@@ -86,16 +85,21 @@ public class EditTask extends AppCompatActivity {
         if (taskIntent != null && taskIntent.hasExtra(TASK_ITEM_ID)) {
             if (mTaskId != DEFAULT_TASK_ID) {
 
-                mTaskId = taskIntent.getIntExtra(TASK_ITEM_ID, DEFAULT_TASK_ID);
+                mTaskId = taskIntent.getIntExtra(
+                        TASK_ITEM_ID,
+                        DEFAULT_TASK_ID);
 
-                TaskViewModel viewModel = ViewModelProviders.of(this).get(TaskViewModel.class);
-                viewModel.getTaskById(mTaskId).observe(this, new Observer<Task>() {
-                    @Override
-                    public void onChanged(Task task) {
-                        fillTextFields(task);
-                        updateTask(task);
-                    }
-                });
+                TaskViewModel viewModel =
+                        ViewModelProviders.of(this)
+                                .get(TaskViewModel.class);
+                viewModel.getTaskById(mTaskId)
+                        .observe(this, new Observer<Task>() {
+                            @Override
+                            public void onChanged(Task task) {
+                                fillTextFields(task);
+                                updateTask(task);
+                            }
+                        });
             }
         }
 
@@ -107,11 +111,19 @@ public class EditTask extends AppCompatActivity {
                 mMonth = mCalendar.get(Calendar.MONTH);
                 mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(EditTask.this,
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        EditTask.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                mDateField.setText(dayOfMonth  + getString(R.string.slash) + (month + 1) + getString(R.string.slash) + year);
+                            public void onDateSet(
+                                    DatePicker view, int year,
+                                    int month,
+                                    int dayOfMonth) {
+                                mDateField.setText(
+                                        dayOfMonth + getString(R.string.slash) +
+                                                (month + 1) +
+                                                getString(R.string.slash) +
+                                                year);
                             }
 
                         }, mYear, mMonth, mDay);
@@ -119,7 +131,7 @@ public class EditTask extends AppCompatActivity {
             }
         });
 
-        //Displays Time Picker Dialog
+        //Displays Time Picker Dia
         setTimeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,17 +139,24 @@ public class EditTask extends AppCompatActivity {
                 mHour = mCalendar.get(Calendar.HOUR_OF_DAY);
                 mMinute = mCalendar.get(Calendar.MINUTE);
 
-                TimePickerDialog timePickerDialog = new TimePickerDialog(EditTask.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        mTimeField.setText(hourOfDay + ":" + minute);
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        c.set(Calendar.MINUTE, minute   );
-                        mTaskTime = c.getTime().getTime();
+                TimePickerDialog timePickerDialog =
+                        new TimePickerDialog(
+                                EditTask.this,
+                                new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(
+                                            TimePicker view,
+                                            int hourOfDay,
+                                            int minute) {
+                                        mTimeField.setText(
+                                                hourOfDay + ":" + minute);
+                                        Calendar c = Calendar.getInstance();
+                                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                                        c.set(Calendar.MINUTE, minute);
+                                        mTaskTime = c.getTime().getTime();
 
-                    }
-                }, mHour, mMinute, IS24HOUR);
+                                    }
+                                }, mHour, mMinute, IS24HOUR);
                 timePickerDialog.show();
             }
         });
@@ -168,9 +187,15 @@ public class EditTask extends AppCompatActivity {
                 task.setDate(mDateObject);
                 task.setTime(mTaskTime);
 
-                TaskViewModel vm = ViewModelProviders.of(EditTask.this).get(TaskViewModel.class);
+                TaskViewModel vm = ViewModelProviders.of(
+                        EditTask.this)
+                        .get(TaskViewModel.class);
                 vm.update(task);
-                Toast.makeText(EditTask.this, task.getTitle() + " " + task.getDate(), Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        EditTask.this,
+                        task.getTitle() +
+                                " " + task.getDate(),
+                        Toast.LENGTH_LONG).show();
 
                 finish();
             }

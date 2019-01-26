@@ -2,8 +2,12 @@ package com.yekuwilfred.tasker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yekuwilfred.tasker.adapters.RvEmptyObserver;
@@ -26,9 +30,9 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
     public static final int EDIT_TASK_CODE = 12;
     private RecyclerView mTaskRv;
     private TaskRecyclerViewAdapter mTaskAdapter;
-    private FloatingActionButton fab;
     private TaskViewModel mViewModel;
     private TextView mEmptyRv;
+    private FloatingActionButton mAddTaskFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +76,9 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
         }).attachToRecyclerView(mTaskRv);
 
 
-        fab = findViewById(R.id.fab);
+        mAddTaskFab = findViewById(R.id.add_task_fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        mAddTaskFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addTaskIntent = new Intent(TasksListActivity.this, AddTask.class);
@@ -102,6 +106,29 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
         Intent taskIntent = new Intent(getApplicationContext(), EditTask.class);
         taskIntent.putExtra(TASK_ITEM_ID, itemId);
         startActivity(taskIntent);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.settings:
+                Toast.makeText(this, "Settings Clicked",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.about:
+                Toast.makeText(this, "About to be Implemented", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
