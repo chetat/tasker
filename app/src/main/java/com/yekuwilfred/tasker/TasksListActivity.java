@@ -14,6 +14,7 @@ import com.yekuwilfred.tasker.adapters.RvEmptyObserver;
 import com.yekuwilfred.tasker.adapters.TaskRecyclerViewAdapter;
 import com.yekuwilfred.tasker.model.Task;
 import com.yekuwilfred.tasker.model.TaskViewModel;
+import com.yekuwilfred.tasker.settings.SettingsActivity;
 
 import java.util.List;
 
@@ -122,7 +123,9 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
 
         switch (id){
             case R.id.settings:
-                Toast.makeText(this, "Settings Clicked",Toast.LENGTH_SHORT).show();
+                //Intent menuIntent = new Intent(this, SettingsActivity.class);
+                //startActivity(menuIntent);
+                Toast.makeText(this, "Settings to be implemented", Toast.LENGTH_LONG).show();
                 break;
             case R.id.about:
                 Toast.makeText(this, "About to be Implemented", Toast.LENGTH_SHORT).show();
@@ -130,6 +133,7 @@ public class TasksListActivity extends AppCompatActivity implements TaskRecycler
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }
